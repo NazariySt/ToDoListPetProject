@@ -1,6 +1,7 @@
 package com.softserve.itacademy.controller;
 
 import com.softserve.itacademy.model.User;
+import com.softserve.itacademy.security.PasswordConfig;
 import com.softserve.itacademy.service.RoleService;
 import com.softserve.itacademy.service.UserService;
 import org.springframework.stereotype.Controller;
@@ -13,10 +14,12 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/users")
 public class UserController {
 
+    private final PasswordConfig passwordConfig;
     private final UserService userService;
     private final RoleService roleService;
 
-    public UserController(UserService userService, RoleService roleService) {
+    public UserController(PasswordConfig passwordConfig, UserService userService, RoleService roleService) {
+        this.passwordConfig = passwordConfig;
         this.userService = userService;
         this.roleService = roleService;
     }
@@ -32,7 +35,7 @@ public class UserController {
         if (result.hasErrors()) {
             return "create-user";
         }
-        user.setPassword(user.getPassword());
+        user.setPassword(passwordConfig.passwordEncoder().encode(user.getPassword()));
         user.setRole(roleService.readById(2));
         User newUser = userService.create(user);
         return "redirect:/todos/all/users/" + newUser.getId();
@@ -67,6 +70,7 @@ public class UserController {
         } else {
             user.setRole(roleService.readById(roleId));
         }
+        oldUser.setPassword(passwordConfig.passwordEncoder().encode(user.getPassword()));
         userService.update(user);
         return "redirect:/users/" + id + "/read";
     }
