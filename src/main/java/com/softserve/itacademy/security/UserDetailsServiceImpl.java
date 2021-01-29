@@ -2,7 +2,6 @@ package com.softserve.itacademy.security;
 
 import com.softserve.itacademy.model.User;
 import com.softserve.itacademy.repository.UserRepository;
-import com.softserve.itacademy.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -10,11 +9,11 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
-public class MainUserService implements UserDetailsService {
+public class UserDetailsServiceImpl implements UserDetailsService {
     private final UserRepository userRepository;
 
     @Autowired
-    public MainUserService(UserRepository userRepository) {
+    public UserDetailsServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
@@ -23,6 +22,6 @@ public class MainUserService implements UserDetailsService {
         User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new UsernameNotFoundException(String.format("User email %s not found", userEmail)));  // load user from storage
 
-        return MainUser.create(user);
+        return SecurityUser.create(user);
     }
 }

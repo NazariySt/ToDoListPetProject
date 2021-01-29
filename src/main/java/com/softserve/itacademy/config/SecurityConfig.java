@@ -1,10 +1,11 @@
-package com.softserve.itacademy.security;
+package com.softserve.itacademy.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.softserve.itacademy.security.UserDetailsServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -12,32 +13,33 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 @EnableWebSecurity
-public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
+@EnableGlobalMethodSecurity(prePostEnabled = true)
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final PasswordEncoder passwordEncoder;
-    private final MainUserService mainUserService;
+    private final UserDetailsServiceImpl userDetailsServiceImpl;
 
-    @Autowired
-    public WebSecurityConfigurer(PasswordEncoder passwordEncoder, MainUserService mainUserService) {
+
+    public SecurityConfig(PasswordEncoder passwordEncoder, UserDetailsServiceImpl userDetailsServiceImpl) {
         this.passwordEncoder = passwordEncoder;
-        this.mainUserService = mainUserService;
+        this.userDetailsServiceImpl = userDetailsServiceImpl;
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
+                .csrf().disable()
                 .authorizeRequests()
                 .anyRequest()
                 .authenticated()
                 .and()
-//                .httpBasic()
                 .formLogin()
 
-                .loginPage("/login-form")
-                    .loginProcessingUrl("/login")
-                    .defaultSuccessUrl("/home")
-                    .failureUrl("/login-form?error=true")
+                .loginPage("/login")
+//                    .loginProcessingUrl("/login")
                     .permitAll()
+                    .defaultSuccessUrl("/", true)
+                    .failureUrl("/login?error=true")
                 .and()
                 .logout()
                     .logoutUrl("/perform-logout")
@@ -57,7 +59,7 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
     public DaoAuthenticationProvider daoAuthenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setPasswordEncoder(passwordEncoder);
-        provider.setUserDetailsService(mainUserService);
+        provider.setUserDetailsService(userDetailsServiceImpl);
         return provider;
     }
 }

@@ -4,6 +4,7 @@ import com.softserve.itacademy.model.User;
 import com.softserve.itacademy.security.PasswordConfig;
 import com.softserve.itacademy.service.RoleService;
 import com.softserve.itacademy.service.UserService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -23,7 +24,7 @@ public class UserController {
         this.userService = userService;
         this.roleService = roleService;
     }
-
+    @PreAuthorize("hasRole('USER')")
     @GetMapping("/create")
     public String create(Model model) {
         model.addAttribute("user", new User());
@@ -31,6 +32,7 @@ public class UserController {
     }
 
     @PostMapping("/create")
+    @PreAuthorize("hasRole('ADMIN')")
     public String create(@Validated @ModelAttribute("user") User user, BindingResult result) {
         if (result.hasErrors()) {
             return "create-user";

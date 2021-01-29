@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
@@ -9,7 +9,7 @@
 <h2>LogIn Page</h2>
 <div th:if="${param.error}">Invalid username and password.</div>
 <div th:if="${param.logout}">You have been logged out.</div>
-<form th:action="@{/users/create}" method="POST">
+<form th:action="@{/login}" method="POST">
     <label>Username:</label >
     <input type="text" name="username" /><br>
     <label >Password:</label >
