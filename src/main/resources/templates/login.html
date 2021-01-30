@@ -6,6 +6,7 @@
     <title>Login page</title>
 </head>
 <body>
+<div th:replace="header"></div>
 <h2>LogIn Page</h2>
 <div th:if="${param.error}">Invalid username and password.</div>
 <div th:if="${param.logout}">You have been logged out.</div>
