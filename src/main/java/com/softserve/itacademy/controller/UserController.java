@@ -26,14 +26,14 @@ public class UserController {
         this.roleService = roleService;
     }
     @GetMapping("/create")
-    //    @PreAuthorize("hasAnyAuthority('ADMIN', 'ANONIMUS')")
+    @PreAuthorize("!hasAuthority('USER')")
     public String create(Model model) {
         model.addAttribute("user", new User());
         return "create-user";
     }
 
     @PostMapping("/create")
-//    @PostAuthorize("hasAnyAuthority('ADMIN', 'ANONIMUS')")
+    @PostAuthorize("!hasAuthority('USER')")
     public String create(@Validated @ModelAttribute("user") User user, BindingResult result) {
         if (result.hasErrors()) {
             return "create-user";

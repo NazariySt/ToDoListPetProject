@@ -110,7 +110,6 @@ public class ToDoController {
         return "redirect:/todos/" + id + "/tasks";
     }
 
-
     @GetMapping("/{id}/remove")
     public String removeCollaborator(@PathVariable long id, @RequestParam("user_id") long userId) {
         ToDo todo = todoService.readById(id);
