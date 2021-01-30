@@ -3,6 +3,7 @@ package com.softserve.itacademy.config;
 import com.softserve.itacademy.security.UserDetailsServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -10,10 +11,14 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableGlobalMethodSecurity(
+        prePostEnabled = true,
+        securedEnabled = true,
+        jsr250Enabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final PasswordEncoder passwordEncoder;
@@ -30,23 +35,28 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .csrf().disable()
                 .authorizeRequests()
+                    //.antMatchers( "/users/create").permitAll()
+                    .antMatchers(HttpMethod.GET, "/users/create").hasAnyAuthority("ANONIMUS", "ADMIN")
+//                    .antMatchers(HttpMethod.POST, "/users/create").hasAnyAuthority("ANONIMUS", "ADMIN")
                 .anyRequest()
                 .authenticated()
                 .and()
                 .formLogin()
-
-                .loginPage("/login")
-//                    .loginProcessingUrl("/login")
+                    .loginPage("/login-form")
+                    .loginProcessingUrl("/login")
+                    .defaultSuccessUrl("/home")
+                    .failureUrl("/login-form?error=true")
                     .permitAll()
-                    .defaultSuccessUrl("/", true)
-                    .failureUrl("/login?error=true")
                 .and()
                 .logout()
-                    .logoutUrl("/perform-logout")
+                    .logoutUrl("/logout")
+                    .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET"))
                     .clearAuthentication(true)
                     .invalidateHttpSession(true)
                     .deleteCookies("JSESSIONID")
-                    .logoutSuccessUrl("/login-form");
+                    .logoutSuccessUrl("/login-form")
+                .and()
+                .exceptionHandling().accessDeniedPage("/403");
 
         }
 

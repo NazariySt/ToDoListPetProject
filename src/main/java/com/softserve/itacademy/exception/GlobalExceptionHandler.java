@@ -9,6 +9,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
+import java.nio.file.AccessDeniedException;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -31,6 +32,12 @@ public class GlobalExceptionHandler {
     @ResponseStatus(value= HttpStatus.INTERNAL_SERVER_ERROR)
     public ModelAndView internalServerErrorHandler(HttpServletRequest request, Exception exception) {
         return getModelAndView(request, HttpStatus.INTERNAL_SERVER_ERROR, exception);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    @ResponseStatus(value= HttpStatus.FORBIDDEN)
+    public ModelAndView forbidden(HttpServletRequest request, Exception exception) {
+        return getModelAndView(request, HttpStatus.FORBIDDEN, exception);
     }
 
     private ModelAndView getModelAndView(HttpServletRequest request, HttpStatus httpStatus, Exception exception) {
