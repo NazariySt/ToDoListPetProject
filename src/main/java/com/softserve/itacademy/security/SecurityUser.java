@@ -12,15 +12,17 @@ import java.util.List;
 public class SecurityUser implements UserDetails {
 
     private final long id;
+    private final String firstName;
     private final String email;
     private final String password;
     private final Collection<? extends GrantedAuthority> rols;
 
     public SecurityUser(long id,
-                        String email,
+                        String firstName, String email,
                         String password,
                         Collection<? extends GrantedAuthority> rols) {
         this.id = id;
+        this.firstName = firstName;
         this.email = email;
         this.password = password;
         this.rols = rols;
@@ -38,7 +40,7 @@ public class SecurityUser implements UserDetails {
         List<GrantedAuthority> rols = Collections.singletonList(new SimpleGrantedAuthority( user.getRole().getName()));
         return new SecurityUser(
                 user.getId(),
-                user.getEmail(),
+                user.getFirstName(), user.getEmail(),
                 user.getPassword(),
                 rols);
     }
