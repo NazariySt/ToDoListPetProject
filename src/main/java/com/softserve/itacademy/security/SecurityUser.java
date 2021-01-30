@@ -15,17 +15,19 @@ public class SecurityUser implements UserDetails {
     private final String firstName;
     private final String email;
     private final String password;
+    private final String role;
     private final Collection<? extends GrantedAuthority> rols;
 
     public SecurityUser(long id,
                         String firstName,
                         String email,
                         String password,
-                        Collection<? extends GrantedAuthority> rols) {
+                        String role, Collection<? extends GrantedAuthority> rols) {
         this.id = id;
         this.firstName = firstName;
         this.email = email;
         this.password = password;
+        this.role = role;
         this.rols = rols;
     }
 
@@ -43,7 +45,9 @@ public class SecurityUser implements UserDetails {
                 user.getId(),
                 user.getFirstName(),
                 user.getEmail(),
-                user.getPassword(), rols);
+                user.getPassword(),
+                user.getRole().getName(),
+                rols);
     }
 
     @Override
@@ -83,5 +87,9 @@ public class SecurityUser implements UserDetails {
 
     public String getFirstName() {
         return firstName;
+    }
+
+    public String getRole() {
+        return role;
     }
 }
